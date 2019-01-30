@@ -1,21 +1,28 @@
-
 var flock;
+let velocity
 
 function setup() {
-  createCanvas(640,360);
+  createCanvas(1000,1000);
   // createP("Drag the mouse to generate new boids.");
 
   flock = new Flock();
   // Add an initial set of boids into the system
-  for (var i = 0; i < 100; i++) {
+  for (var i = 0; i < 2; i++) {
     var b = new Boid(width/2,height/2);
     flock.addBoid(b);
   }
+  velocity = createVector(random(-1,1),random(-1,1))
+  console.log(velocity - flock.boids[0].velocity)
 }
+
 
 function draw() {
   background(51);
   flock.run();
+  if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
+      velocity = flock.boids[0].velocity
+      console.log(velocity)
+  }
 }
 
 // Add a new boid into the System
@@ -48,7 +55,7 @@ class Boid {
         // this.acceleration = [0,0];
         // this.velocity = [random(-1,1),random(-1,1)];
         // this.position = [x,y];
-        this.r = 3.0;
+        this.r = 10.0; //3.0
         this.maxspeed = 3;    // Maximum speed
         this.maxforce = 0.05; // Maximum steering force
     }
@@ -122,8 +129,8 @@ class Boid {
 
 //##############
     borders(){
-        if (this.position.x < -this.r)  this.position.x = width +this.r;
-        if (this.position.y < -this.r)  this.position.y = height+this.r;
+        if (this.position.x < -this.r) this.position.x = width +this.r;
+        if (this.position.y < -this.r) this.position.y = height+this.r;
         if (this.position.x > width +this.r) this.position.x = -this.r;
         if (this.position.y > height+this.r) this.position.y = -this.r;
     }
