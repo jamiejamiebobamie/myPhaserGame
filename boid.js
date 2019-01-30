@@ -1,5 +1,5 @@
 var flock;
-let velocity
+let velocity;
 
 function setup() {
   createCanvas(1000,1000);
