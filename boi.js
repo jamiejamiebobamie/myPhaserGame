@@ -11,7 +11,6 @@ function setup() {
     var b = new Boid(width/2,height/2);
     flock.addBoid(b);
   }
-  velocity = [random(-1,1),random(-1,1)]
 }
 
 
@@ -53,8 +52,8 @@ class Boid {
         this.r = random(.5,2.5); //3.0
         this.maxspeed = random(2.5,3);    // Maximum speed
         this.maxforce = 0.05; // Maximum steering force
-        this.desired = [0,0];
-        this.steer = [0,0];
+        // this.desired = [0,0];
+        // this.steer = [0,0];
     }
 
     run(){
@@ -74,10 +73,14 @@ class Boid {
         var sep = this.separate(boids);   // Separation
         var ali = this.align(boids);      // Alignment
         var coh = this.cohesion(boids);   // Cohesion
+
         // Arbitrarily weight these forces
-        sep.mult(1.5);
-        ali.mult(1.0);
-        coh.mult(1.0);
+        sep[0] *= 1.5
+        sep[1] *= 1.5
+        // sep.mult(1.5);
+        // ali.mult(1.0);
+        // coh.mult(1.0);
+
         // Add the force vectors to acceleration
         this.applyForce(sep);
         this.applyForce(ali);
@@ -112,13 +115,13 @@ class Boid {
     seek(target){
         let normalizedDesired;
 
-        this.desired[0] = this.position[0] - target[0]
-        this.desired[1] = this.position[1] - target[1]
+        desired[0] = this.position[0] - target[0]
+        desired[1] = this.position[1] - target[1]
 
         if (desired[0]>desired[1]) {
-            normalizedDesired = [1, (this.desired[0] / this.desired[1])]
+            normalizedDesired = [1, (desired[0] / desired[1])]
         } else if (desired[1]>desired[0]) {
-            normalizedDesired = [(this.desired[1] / this.desired[0]), 1]
+            normalizedDesired = [(desired[1] / desired[0]), 1]
         } else {
             normalizedDesired = [1,1]
         }
@@ -145,17 +148,19 @@ class Boid {
 
         // var steer = p5.Vector.sub(desired,this.velocity);
         // steer.limit(this.maxforce);  // Limit to maximum steering force
-        return this.steer;
+        return steer;
     }
 
 //##############
     render(){
         // Draw a triangle rotated in the direction of velocity
-        var theta = this.velocity.heading() + radians(90);
+        let theta = Math.acos(this.velocity[0]/(Math.sqrt(Math.pow(this.velocity[0])+Math.pow(this.velocity[0])))) + radians(90);
+        // var theta = this.velocity.heading() + radians(90);
         fill(127);
         stroke(200);
         push();
-        translate(this.position.x,this.position.y);
+        // console.log(parseFloat(this.position[0]),parseFloat(this.position[1]))
+        translate(parseFloat(this.position[0]),parseFloat(this.position[1]));
         rotate(theta);
         beginShape();
         vertex(0, -this.r*2);
@@ -180,13 +185,14 @@ class Boid {
         // For every boid in the system, check if it's too close
         for (var i = 0; i < boids.length; i++) {
              let d = [Math.pow((boids[i].position[0] - this.position[0]),2) + Math.pow((boids[i].position[1] - this.position[1]),2)]
+             d = Math.sqrt(d)
           // var d = p5.Vector.dist(this.position,boids[i].position);
           // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
           if ((d > 0) && (d < desiredseparation)) {
             // Calculate vector pointing away from neighbor
-            let diff [0,0];
-            let diff[0] = boids[i].position[0] - this.position[0];
-            let diff[1] = boids[i].position[1] - this.position[1];
+            let diff = [0,0];
+            diff[0] = boids[i].position[0] - this.position[0];
+            diff[1] = boids[i].position[1] - this.position[1];
 
             if (diff[0]>diff[1]) {
                 diff = [1, (diff[0] / diff[1])];
@@ -217,15 +223,39 @@ class Boid {
           // `steer.div(count);
         }
 
+         // magnitude of a vector: sqrt(x*x + y*y + z*z).)
+         let mag = Math.sqrt(Math.pow(steer[0],2) + Math.pow(steer[1],2))
         // As long as the vector is greater than 0
-        if (steer.mag() > 0) {
+        if (mag > 0) {
           // Implement Reynolds: Steering = Desired - Velocity
           steer.normalize();
-          steer.mult(this.maxspeed);
-          steer.sub(this.velocity);
-          steer.limit(this.maxforce);
+          if (steer[0]>steer[1]) {
+              steer = [1, (steer[0] / steer[1])];
+          } else if (steer[1]>steer[0]) {
+              steer = [(steer[1] / steer[0]), 1];
+          } else {
+              steer = [1,1];
+          }
+
+          steer[0] *= this.maxspeed;
+          steer[1] *= this.maxspeed;
+
+          // steer.mult(this.maxspeed);
+
+          if (steer[0] < this.maxforce || steer[1] < this.maxforce){
+          steer[0] -= this.velocity[0];
+          steer[1] -= this.velocity[1];
+      } else {
+          steer[0] += this.velocity[0];
+          steer[1] += this.velocity[1];
+
+      }
+
+          // steer.sub(this.velocity);
+          // steer.limit(this.maxforce);
         }
         return steer;
+        // console.log(steer)
     }
 
     align(boids){
@@ -234,6 +264,7 @@ class Boid {
         var count = 0;
         for (var i = 0; i < boids.length; i++) {
          let d = [Math.pow((boids[i].position[0] - this.position[0]),2) + Math.pow((boids[i].position[1] - this.position[1]),2)]
+         d = Math.sqrt(d)
           if ((d > 0) && (d < neighbordist)) {
               sum[0] += boids[i].velocity[0]
               sum[1] += boids[i].velocity[1]
@@ -287,6 +318,7 @@ class Boid {
         var count = 0;
         for (var i = 0; i < boids.length; i++) {
             let d = [Math.pow((boids[i].position[0] - this.position[0]),2) + Math.pow((boids[i].position[1] - this.position[1]),2)]
+            d = Math.sqrt(d)
           // var d = p5.Vector.dist(this.position,boids[i].position);
           if ((d > 0) && (d < neighbordist)) {
               sum[0] += boids[i].position[0]
