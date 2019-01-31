@@ -1,14 +1,16 @@
-var flock;
+let flock;
 let velocity;
 
 function setup() {
-  createCanvas(1000,1000);
+  createCanvas(700,700);
   // createP("Drag the mouse to generate new boids.");
 
   flock = new Flock();
   // Add an initial set of boids into the system
-  for (var i = 0; i < 2; i++) {
-    var b = new Boid(width/2,height/2);
+  for (let i = 0; i < 10; i++) {
+      let x = width/2;
+      let y = height/2;
+    let b = new Boid(x,y);
     flock.addBoid(b);
   }
 }
@@ -31,7 +33,7 @@ class Flock{
     }
 
     run(){
-        for (var i = 0; i < this.boids.length; i++) {
+        for (let i = 0; i < this.boids.length; i++) {
           this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
         }
     }
@@ -49,7 +51,7 @@ class Boid {
         // this.acceleration = [0,0];
         // this.velocity = [random(-1,1),random(-1,1)];
         // this.position = [x,y];
-        this.r = random(.5,2.5); //3.0
+        this.r = random(3,5); //3.0
         this.maxspeed = random(2.5,3);    // Maximum speed
         this.maxforce = 0.05; // Maximum steering force
         // this.desired = [0,0];
@@ -70,20 +72,21 @@ class Boid {
     }
 
     flock(boids){
-        var sep = this.separate(boids);   // Separation
-        var ali = this.align(boids);      // Alignment
-        var coh = this.cohesion(boids);   // Cohesion
+        // let sep = this.separate(boids);   // Separation
+        // let ali = this.align(boids);      // Alignment
+        let coh = this.cohesion(boids);   // Cohesion
 
         // Arbitrarily weight these forces
-        sep[0] *= 1.5
-        sep[1] *= 1.5
+        // sep[0] *= 1.5
+        // sep[1] *= 1.5
+
         // sep.mult(1.5);
         // ali.mult(1.0);
         // coh.mult(1.0);
 
         // Add the force vectors to acceleration
-        this.applyForce(sep);
-        this.applyForce(ali);
+        // this.applyForce(sep);
+        // this.applyForce(ali);
         this.applyForce(coh);
     }
 
@@ -146,8 +149,9 @@ class Boid {
     }
 
 
-        // var steer = p5.Vector.sub(desired,this.velocity);
+        // let steer = p5.Vector.sub(desired,this.velocity);
         // steer.limit(this.maxforce);  // Limit to maximum steering force
+                // console.log(typeof steer)
         return steer;
     }
 
@@ -155,10 +159,11 @@ class Boid {
     render(){
         // Draw a triangle rotated in the direction of velocity
         let theta = Math.acos(this.velocity[0]/(Math.sqrt(Math.pow(this.velocity[0])+Math.pow(this.velocity[0])))) + radians(90);
-        // var theta = this.velocity.heading() + radians(90);
+        // let theta = this.velocity.heading() + radians(90);
         fill(127);
         stroke(200);
         push();
+        // console.log(typeof this.position[0])
         // console.log(parseFloat(this.position[0]),parseFloat(this.position[1]))
         translate(parseFloat(this.position[0]),parseFloat(this.position[1]));
         rotate(theta);
@@ -179,14 +184,14 @@ class Boid {
     }
 
     separate(boids){
-        var desiredseparation = 25.0;
-        var steer = [0,0];
-        var count = 0;
+        let desiredseparation = 25.0;
+        let steer = [0,0];
+        let count = 0;
         // For every boid in the system, check if it's too close
-        for (var i = 0; i < boids.length; i++) {
+        for (let i = 0; i < boids.length; i++) {
              let d = [Math.pow((boids[i].position[0] - this.position[0]),2) + Math.pow((boids[i].position[1] - this.position[1]),2)]
              d = Math.sqrt(d)
-          // var d = p5.Vector.dist(this.position,boids[i].position);
+          // let d = p5.Vector.dist(this.position,boids[i].position);
           // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
           if ((d > 0) && (d < desiredseparation)) {
             // Calculate vector pointing away from neighbor
@@ -202,7 +207,7 @@ class Boid {
                 diff = [1,1];
             }
 
-            // var diff = p5.Vector.sub(this.position,boids[i].position);
+            // let diff = p5.Vector.sub(this.position,boids[i].position);
             // diff.normalize();
 
             diff[0] /= d;
@@ -259,10 +264,10 @@ class Boid {
     }
 
     align(boids){
-        var neighbordist = 50;
-        var sum = [0,0];
-        var count = 0;
-        for (var i = 0; i < boids.length; i++) {
+        let neighbordist = 50;
+        let sum = [0,0];
+        let count = 0;
+        for (let i = 0; i < boids.length; i++) {
          let d = [Math.pow((boids[i].position[0] - this.position[0]),2) + Math.pow((boids[i].position[1] - this.position[1]),2)]
          d = Math.sqrt(d)
           if ((d > 0) && (d < neighbordist)) {
@@ -304,7 +309,7 @@ class Boid {
 
       }
 
-          // var steer = p5.Vector.sub(sum,this.velocity);
+          // let steer = p5.Vector.sub(sum,this.velocity);
           // steer.limit(this.maxforce);
           return steer;
         } else {
@@ -313,13 +318,19 @@ class Boid {
     }
 
     cohesion(boids){
-        var neighbordist = 50;
-        var sum = [0,0];   // Start with empty vector to accumulate all locations
-        var count = 0;
-        for (var i = 0; i < boids.length; i++) {
-            let d = [Math.pow((boids[i].position[0] - this.position[0]),2) + Math.pow((boids[i].position[1] - this.position[1]),2)]
+        let neighbordist = 50;
+        let sum = [0,0];   // Start with empty vector to accumulate all locations
+        let count = 0;
+        let otherBoidPos = [0,0];
+        let pos;
+        for (let i = 0; i < boids.length; i++) {
+            otherBoidPos = boids[i].position;
+            pos = otherBoidPos[0] //- this.position[0]
+            console.log(pos)
+            let d = [Math.pow(otherBoidPos[0] - this.position[0],2) + Math.pow((boids[i].position[1] - this.position[1]),2)]
             d = Math.sqrt(d)
-          // var d = p5.Vector.dist(this.position,boids[i].position);
+            // console.log(d)
+          // let d = p5.Vector.dist(this.position,boids[i].position);
           if ((d > 0) && (d < neighbordist)) {
               sum[0] += boids[i].position[0]
               sum[1] += boids[i].position[1]
@@ -327,6 +338,7 @@ class Boid {
             count++;
           }
         }
+        // console.log(count)
         if (count > 0) {
             sum[0] /= count;
             sum[1] /= count;
