@@ -1,13 +1,38 @@
 var flock;
 let velocity;
+let fish1;
+let fish2;
+let foam;
+let foamX;
+let interv;
+let boat;
+
+let numFish = 40;
+
+function drawFishy(){
+    var fishy;
+    var randomBool = random()
+    if (randomBool > .5){
+        return fish1
+    } else {
+        return fish2
+    }
+}
+
 
 function setup() {
   createCanvas(1000,1000);
+
+  fish1 = loadImage('public/fish1Resized.png');
+  fish2 = loadImage('public/fish2Resized.png');
+  foam = loadImage('public/rapids_foam.png');
+  boat = loadImage('public/skiff.png');
+
   // createP("Drag the mouse to generate new boids.");
 
   flock = new Flock();
   // Add an initial set of boids into the system
-  for (var i = 0; i < 2; i++) {
+  for (var i = 0; i < numFish; i++) {
     var b = new Boid(width/2,height/2);
     flock.addBoid(b);
   }
@@ -17,7 +42,8 @@ function setup() {
 
 
 function draw() {
-  background(51);
+  // background(51);
+  background("#003366")
   flock.run();
   if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
       velocity = flock.boids[0].velocity
@@ -47,6 +73,16 @@ class Flock{
     }
 }
 
+function drawFoam(foam){
+    let speed = .1;
+    if (foamX < width){
+        foamX += speed;
+    } else {
+        foamX = 0
+    }
+} //doesn't really work. it speeds up when you click the canvas. i have no idea why.
+
+
 class Boid {
     constructor(x, y){
         this.acceleration = createVector(0,0);
@@ -56,7 +92,7 @@ class Boid {
         // this.velocity = [random(-1,1),random(-1,1)];
         // this.position = [x,y];
         this.r = 10.0; //3.0
-        this.maxspeed = 3;    // Maximum speed
+        this.maxspeed = 5;    // Maximum speed
         this.maxforce = 0.05; // Maximum steering force
     }
 
@@ -112,19 +148,26 @@ class Boid {
 
 //##############
     render(){
+        interv = setInterval(drawFishy, 1000);
         // Draw a triangle rotated in the direction of velocity
         var theta = this.velocity.heading() + radians(90);
         fill(127);
-        stroke(200);
+        fill("#003366")
+        stroke('#0052A2');
+        // drawFoam();
+        // image(foam, foamX, 0); //cool idea, bro.
         push();
         translate(this.position.x,this.position.y);
-        rotate(theta);
-        beginShape();
-        vertex(0, -this.r*2);
-        vertex(-this.r, this.r*2);
-        vertex(this.r, this.r*2);
-        endShape(CLOSE);
+        // rotate(theta);
+        image(drawFishy(), this.position.x, this.position.y);
+        // image(boat, 100, 100);
+        // beginShape();
+        // vertex(0, -this.r*2);
+        // vertex(-this.r, this.r*2);
+        // vertex(this.r, this.r*2);
+        // endShape(CLOSE);
         pop();
+
     }
 
 //##############
