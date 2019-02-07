@@ -13,31 +13,7 @@ let shark2;
 
 let numFish = 50;
 
-function drawFishy(){
-    // var fishy;
-    var randomBool = random()
-    if (randomBool > .5){
-        if (randomBool > .5){
-            // return squid1
-            // return fish1
-            return shark1
-    } else {
-        // return squid2
-        // return fish2
-        return shark2
-    }
-    } else {
-        if (randomBool > .5){
-        // return squid1
-        return fish1
-        // return shark1
-    } else {
-    return squid2
-        // return fish2
-        // return shark2
-    }
-}
-} //size comparison
+let sharks = numFish * .1
 
 
 function setup() {
@@ -59,9 +35,8 @@ function setup() {
   for (var i = 0; i < numFish; i++) {
     var b = new Boid(width/2,height/2);
     flock.addBoid(b);
-  }
+}
   velocity = createVector(random(-1,1),random(-1,1))
-  console.log(velocity - flock.boids[0].velocity)
 }
 
 
@@ -77,25 +52,35 @@ function draw() {
 
 // Add a new boid into the System
 function mouseDragged() {
-  flock.addBoid(new Boid(mouseX,mouseY));
+    if (flock.lenShark > sharks){
+        flock.addBoid(new Boid(mouseX,mouseY, "fish"));
+    } else if (flock.lenFish < (numFish*3)) {
+  flock.addBoid(new Boid(mouseX,mouseY, "shark"));
+}
 }
 
 
 class Flock{
     constructor(){
         this.boids = [];
-        this.len = this.boids.length;
+        this.lenShark = 0;
+        this.lenFish = 0;
     }
 
     run(){
         for (var i = 0; i < this.boids.length; i++) {
           this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
         }
+        console.log([this.lenFish, this.lenShark])
     }
 
     addBoid(boid){
         this.boids.push(boid);
-        this.len += 1;
+        if (boid.fish == "fish"){
+            this.lenFish += 1;
+        } else if (boid.fish == "shark"){
+            this.lenShark += 1;
+        }
     }
 }
 
@@ -117,7 +102,7 @@ function drawFoam(foam){
 
 
 class Boid {
-    constructor(x, y){
+    constructor(x, y, fish="fish"){
         this.acceleration = createVector(0,0);
         this.velocity = createVector(random(-1,1),random(-1,1));
         this.position = createVector(x,y);
@@ -127,8 +112,36 @@ class Boid {
         this.r = 0.0; //3.0
         this.maxspeed = random(3,4);    // Maximum speed
         this.maxforce = 0.05; // Maximum steering force
-        this.t = [150, 150, 150, random(255)]
+        this.t = [150, 150, 150, random(255)];
+        this.fish = fish;
     }
+
+    drawFishy(){
+        // var fishy;
+        let randomBool = random()
+        if (this.fish == "fish"){
+        if (randomBool > .5){
+        //     if (randomBool > .5){
+        //         // return squid1
+                return fish1
+                // return shark1
+        } else {
+        //     // return squid2
+            return fish2
+            // return shark2
+        //     }
+    }} else if (this.fish == "shark") {
+            if (randomBool > .5){
+        //     // return squid1
+        //     // return fish1
+            return shark1
+        } else {
+        // // return squid2
+        //     // return fish2
+            return shark2
+        }
+    }
+    } //size comparison
 
     run(){
         this.flock(flock.boids);
@@ -182,7 +195,6 @@ class Boid {
 
 //##############
     render(){
-        interv = setInterval(drawFishy, 1000);
         // Draw a triangle rotated in the direction of velocity
         var theta = this.velocity.heading() + radians(90);
         fill(127);
@@ -192,15 +204,17 @@ class Boid {
         // image(foam, foamX, 0); //cool idea, bro.
         push();
         translate(this.position.x,this.position.y);
-        // rotate(theta);
         tint(this.t[0],this.t[1],this.t[2],this.t[3])
-        image(drawFishy(), this.position.x, this.position.y);
+        image(this.drawFishy(), this.position.x, this.position.y);
+        rotate(theta);
         // image(boat, 100, 100);
-        // beginShape();
-        // vertex(0, -this.r*2);
-        // vertex(-this.r, this.r*2);
-        // vertex(this.r, this.r*2);
-        // endShape(CLOSE);
+        fill("black")
+        stroke("white");
+        beginShape();
+        vertex(0, -this.r*2);
+        vertex(-this.r, this.r*2);
+        vertex(this.r, this.r*2);
+        endShape(CLOSE);
         pop();
 
     }
