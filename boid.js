@@ -7,7 +7,7 @@ let foamX;
 let interv;
 let boat;
 
-let numFish = 40;
+let numFish = 50;
 
 function drawFishy(){
     var fishy;
@@ -47,7 +47,7 @@ function draw() {
   flock.run();
   if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
       velocity = flock.boids[0].velocity
-      console.log(velocity)
+      console.log(flock.len)
   }
 }
 
@@ -60,6 +60,7 @@ function mouseDragged() {
 class Flock{
     constructor(){
         this.boids = [];
+        this.len = this.boids.length;
     }
 
     run(){
@@ -70,6 +71,7 @@ class Flock{
 
     addBoid(boid){
         this.boids.push(boid);
+        this.len += 1;
     }
 }
 
@@ -91,9 +93,10 @@ class Boid {
         // this.acceleration = [0,0];
         // this.velocity = [random(-1,1),random(-1,1)];
         // this.position = [x,y];
-        this.r = 10.0; //3.0
-        this.maxspeed = 5;    // Maximum speed
+        this.r = 0.0; //3.0
+        this.maxspeed = random(3,4);    // Maximum speed
         this.maxforce = 0.05; // Maximum steering force
+        this.t = [150, 150, 150, random(255)]
     }
 
     run(){
@@ -159,6 +162,7 @@ class Boid {
         push();
         translate(this.position.x,this.position.y);
         // rotate(theta);
+        tint(this.t[0],this.t[1],this.t[2],this.t[3])
         image(drawFishy(), this.position.x, this.position.y);
         // image(boat, 100, 100);
         // beginShape();
