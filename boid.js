@@ -6,18 +6,38 @@ let foam;
 let foamX;
 let interv;
 let boat;
+let squid1;
+let squid2;
+let shark1;
+let shark2;
 
 let numFish = 50;
 
 function drawFishy(){
-    var fishy;
+    // var fishy;
     var randomBool = random()
     if (randomBool > .5){
-        return fish1
+        if (randomBool > .5){
+            // return squid1
+            // return fish1
+            return shark1
     } else {
-        return fish2
+        // return squid2
+        // return fish2
+        return shark2
+    }
+    } else {
+        if (randomBool > .5){
+        // return squid1
+        return fish1
+        // return shark1
+    } else {
+    return squid2
+        // return fish2
+        // return shark2
     }
 }
+} //size comparison
 
 
 function setup() {
@@ -27,6 +47,10 @@ function setup() {
   fish2 = loadImage('public/fish2Resized.png');
   foam = loadImage('public/rapids_foam.png');
   boat = loadImage('public/skiff.png');
+  squid1 = loadImage('public/squid1ResizedDesat.png');
+  squid2 = loadImage('public/squid2ResizedDesat.png');
+  shark1 = loadImage('public/shark1Resized.png');
+  shark2 = loadImage('public/shark2Resized.png');
 
   // createP("Drag the mouse to generate new boids.");
 
@@ -83,6 +107,13 @@ function drawFoam(foam){
         foamX = 0
     }
 } //doesn't really work. it speeds up when you click the canvas. i have no idea why.
+
+
+// class Predator extends Boid {
+//     constructor(dateStr) {
+//   super(dateStr);
+// }
+// }
 
 
 class Boid {
