@@ -31,36 +31,77 @@ function setup() {
   // createP("Drag the mouse to generate new boids.");
 
   flock = new Flock();
+  flockShark = new FlockShark();
   // Add an initial set of boids into the system
   for (var i = 0; i < numFish; i++) {
-    var b = new Boid(width/2,height/2);
+    var b = new Boid(width/2,height/2, "fish");
     flock.addBoid(b);
+}
+
+for (var i = 0; i < sharks; i++) {
+  var b = new Boid(width/2,height/2, "shark", flock);
+  flockShark.addBoid(b);
+}
+
+
+for (var i = 0; i < flock.length; i++) {
+    flock[i].predator = flockShark
 }
   velocity = createVector(random(-1,1),random(-1,1))
 }
+
 
 
 function draw() {
   // background(51);
   background("#003366")
   flock.run();
+  flockShark.run();
   if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
       velocity = flock.boids[0].velocity
-      console.log(flock.len)
+      // console.log(flock.len)
+  }
+  if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
+      velocity = flockShark.boids[0].velocity
+      // console.log(flock.len)
   }
 }
 
 // Add a new boid into the System
 function mouseDragged() {
-    if (flock.lenShark > sharks){
+    // if (flock.lenShark > sharks){
         flock.addBoid(new Boid(mouseX,mouseY, "fish"));
-    } else if (flock.lenFish < (numFish*3)) {
-  flock.addBoid(new Boid(mouseX,mouseY, "shark"));
+    // } else if (flock.lenFish < (numFish*3)) {
+  // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
 }
-}
+// }
 
 
 class Flock{
+    constructor(){
+        this.boids = [];
+        this.lenShark = 0;
+        this.lenFish = 0;
+    }
+
+    run(){
+        for (var i = 0; i < this.boids.length; i++) {
+          this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
+        }
+        console.log([this.lenFish, this.lenShark])
+    }
+
+    addBoid(boid){
+        this.boids.push(boid);
+        // if (boid.fish == "fish"){
+        //     this.lenFish += 1;
+        // } else if (boid.fish == "shark"){
+        //     this.lenShark += 1;
+        // }
+    }
+}
+
+class FlockShark{
     constructor(){
         this.boids = [];
         this.lenShark = 0;
@@ -102,19 +143,63 @@ function drawFoam(foam){
 
 
 class Boid {
-    constructor(x, y, fish="fish"){
+    constructor(x, y, fish="fish", prey=undefined, predator=undefined){
         this.acceleration = createVector(0,0);
         this.velocity = createVector(random(-1,1),random(-1,1));
         this.position = createVector(x,y);
         // this.acceleration = [0,0];
         // this.velocity = [random(-1,1),random(-1,1)];
         // this.position = [x,y];
-        this.r = 0.0; //3.0
-        this.maxspeed = random(3,4);    // Maximum speed
+        this.r = 20.0; //3.0
         this.maxforce = 0.05; // Maximum steering force
-        this.t = [150, 150, 150, random(255)];
+        this.t = [150, 150, 150, random(100,255)];
         this.fish = fish;
+        this.prey = prey;
+        this.predator = predator;
+        if (this.fish == "shark"){
+            this.maxspeed = random(7,9);
+        } else if (this.fish == "fish"){
+            this.maxspeed = random(3,4);    // Maximum speed
+        }
+        this.dead = false;
     }
+
+    eaten(boids){
+
+    }
+
+    attack(boids){
+        var steer = createVector(0,0);
+        var count = 0;
+        if (this.fish == "shark" && this.prey != undefined){
+            for (var i = 0; i < this.prey.length; i++) {
+                var d = p5.Vector.dist(this.position,this.prey.boids[i].position);
+                // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+                if (d > 0){
+                  // Calculate vector pointing away from neighbor
+                  var diff = p5.Vector.sub(this.position,this.prey.boids[i].position);
+                  diff.normalize();
+                  diff.div(d);        // Weight by distance
+                  steer.add(diff);
+                  count++;            // Keep track of how many
+                }
+              }
+            }
+            // Average -- divide by how many
+            if (count > 0) {
+              steer.div(count);
+            }
+
+            // As long as the vector is greater than 0
+            if (steer.mag() > 0) {
+              // Implement Reynolds: Steering = Desired - Velocity
+              steer.normalize();
+              steer.mult(this.maxspeed);
+              steer.sub(this.velocity);
+              steer.limit(this.maxforce);
+            }
+            return steer;
+        }
 
     drawFishy(){
         // var fishy;
@@ -160,14 +245,17 @@ class Boid {
         var sep = this.separate(boids);   // Separation
         var ali = this.align(boids);      // Alignment
         var coh = this.cohesion(boids);   // Cohesion
+        var atk = this.attack(boids);
         // Arbitrarily weight these forces
         sep.mult(1.5);
         ali.mult(1.0);
         coh.mult(1.0);
+        atk.mult(3.0);
         // Add the force vectors to acceleration
         this.applyForce(sep);
         this.applyForce(ali);
         this.applyForce(coh);
+        this.applyForce(atk);
     }
 
     update(){
@@ -204,19 +292,23 @@ class Boid {
         // image(foam, foamX, 0); //cool idea, bro.
         push();
         translate(this.position.x,this.position.y);
+
+
+        // rotate(theta);
+        // // image(boat, 100, 100);
+        // fill("black")
+        // stroke("white");
+        // beginShape();
+        // vertex(0, -this.r*2);
+        // vertex(-this.r, this.r*2);
+        // vertex(this.r, this.r*2);
+        // endShape(CLOSE);
+        pop();
+        push();
+        // rotate(theta);
         tint(this.t[0],this.t[1],this.t[2],this.t[3])
         image(this.drawFishy(), this.position.x, this.position.y);
-        rotate(theta);
-        // image(boat, 100, 100);
-        fill("black")
-        stroke("white");
-        beginShape();
-        vertex(0, -this.r*2);
-        vertex(-this.r, this.r*2);
-        vertex(this.r, this.r*2);
-        endShape(CLOSE);
         pop();
-
     }
 
 //##############
@@ -228,7 +320,7 @@ class Boid {
     }
 
     separate(boids){
-        var desiredseparation = 25.0;
+        var desiredseparation = 45.0; //25.0
         var steer = createVector(0,0);
         var count = 0;
         // For every boid in the system, check if it's too close
