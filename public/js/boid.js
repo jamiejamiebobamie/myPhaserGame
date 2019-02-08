@@ -57,7 +57,7 @@ function windowResized() {
 }
 
 function draw() {
-    
+
   if (feed == true){
        background("red")
   } else {
@@ -324,15 +324,17 @@ class Boid {
         // push();
         // rotate(theta);
         //KEEP for testing purposes.
-
-        if (this.dead == false){
-        tint(this.t[0],this.t[1],this.t[2],this.t[3])
-    } else {
-        tint(255, 0, 0)
-    }
+        
         if (this.fish == "shark"){
+            tint(this.t[0],this.t[1],this.t[2],this.t[3])
             image(this.drawFishy(), 0,0)//this.position.x-200, this.position.y-25);
         } else if (this.fish == "fish"){
+            if (feed == true){
+            tint(255,100,100)
+            // filter(THRESHOLD)
+            }else{
+            tint(this.t[0],this.t[1],this.t[2],this.t[3])
+        }
             image(this.drawFishy(), 0, 0)//this.position.x, this.position.y);
         }
         pop();
