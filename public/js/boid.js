@@ -25,7 +25,9 @@ function deviceShaken(){
 }
 
 function setup() {
-  var canvas = createCanvas(900,1500);
+var canvas = createCanvas(windowWidth, windowHeight);
+
+  // var canvas = createCanvas(900,1500);
   canvas.parent('sketch-holder');
   imageMode(CENTER);
   shake = false;
@@ -59,7 +61,9 @@ for (var i = 0; i < numFish; i++) {
   velocity = createVector(random(-1,1),random(-1,1))
 }
 
-
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
 
 function draw() {
   // background(51);
