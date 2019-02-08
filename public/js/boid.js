@@ -62,7 +62,11 @@ for (var i = 0; i < numFish; i++) {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+    if (windowWidth < 1500 && windowHeight < 1500){
+        resizeCanvas(windowWidth, windowHeight);
+    } else {
+        resizeCanvas(1500, 1500);
+    }
 }
 
 function draw() {
