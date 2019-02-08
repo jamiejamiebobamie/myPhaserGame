@@ -10,19 +10,12 @@ let squid1;
 let squid2;
 let shark1;
 let shark2;
-let shake;
 
-
-
-
+let feed;
 
 let numFish = 50;
 
 let sharks = Math.floor(numFish * .1)
-
-function deviceShaken(){
-    // let shake = true;
-}
 
 function setup() {
     var canvas = createCanvas(windowWidth, windowHeight);
@@ -32,21 +25,13 @@ function setup() {
     } else {
         canvas = createCanvas(2000, windowHeight);
     }
-
-  // var canvas = createCanvas(900,1500);
   canvas.parent('sketch-holder');
   imageMode(CENTER);
   shake = false;
   fish1 = loadImage('../images/fish1Resized.png');
   fish2 = loadImage('../images/fish2Resized.png');
-  // foam = loadImage('public/rapids_foam.png');
-  // boat = loadImage('public/skiff.png');
-  // squid1 = loadImage('public/squid1ResizedDesat.png');
-  // squid2 = loadImage('public/squid2ResizedDesat.png');
   shark1 = loadImage('../images/shark1Resized.png');
   shark2 = loadImage('../images/shark2Resized.png');
-
-  // createP("Drag the mouse to generate new boids.");
 
   flock = new Flock();
   flockShark = new FlockShark();
@@ -76,26 +61,25 @@ function windowResized() {
 }
 
 function draw() {
-  // background(51);
   if (shake == true){
        background("red")
   } else {
       background("#003366")
   }
-  // shake = false;
+
   flock.run();
   flockShark.run();
+
   if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
       velocity = flock.boids[0].velocity
-      // console.log(flock.len)
   }
   if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
       velocity = flockShark.boids[0].velocity
-      // console.log(flock.len)
   }
 }
 
 // Add a new boid into the System
+
 function mouseDragged() {
     // if (flock.lenShark > sharks){
         // flock.addBoid(new Boid(mouseX,mouseY, "fish"));
@@ -109,11 +93,11 @@ function mousePressed() {
         // flock.addBoid(new Boid(mouseX,mouseY, "fish"));
     // } else if (flock.lenFish < (numFish*3)) {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
-  shake = true;
+  feed = true;
 }
 
 function mouseReleased(){
-       shake = false;
+       feed = false;
 }
 
 
@@ -128,7 +112,6 @@ class Flock{
         for (var i = 0; i < this.boids.length; i++) {
           this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
         }
-        // console.log([this.lenFish, this.lenShark])
     }
 
     addBoid(boid){
@@ -152,7 +135,6 @@ class FlockShark{
         for (var i = 0; i < this.boids.length; i++) {
           this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
         }
-        // console.log([this.lenFish, this.lenShark])
     }
 
     addBoid(boid){
@@ -165,42 +147,27 @@ class FlockShark{
     }
 }
 
-function drawFoam(foam){
-    let speed = .1;
-    if (foamX < width){
-        foamX += speed;
-    } else {
-        foamX = 0
-    }
-} //doesn't really work. it speeds up when you click the canvas. i have no idea why.
-
-
-// class Predator extends Boid {
-//     constructor(dateStr) {
-//   super(dateStr);
-// }
-// }
-
 
 class Boid {
     constructor(x, y, fish="fish", prey=undefined, predator=undefined){
         this.acceleration = createVector(0,0);
         this.velocity = createVector(random(-1,1),random(-1,1));
         this.position = createVector(x,y);
-        // this.acceleration = [0,0];
-        // this.velocity = [random(-1,1),random(-1,1)];
-        // this.position = [x,y];
         this.r = 20.0; //3.0
         this.maxforce = 0.05; // Maximum steering force
         this.t = [150, 150, 150, random(100,255)];
         this.fish = fish;
         this.prey = prey;
         this.predator = predator;
+
         if (this.fish == "shark"){
             this.maxspeed = 9//random(8,9);
+            this.t = [150, 150, 150, random(200,255)];
         } else if (this.fish == "fish"){
             this.maxspeed = random(33,34);    // Maximum speed
+            this.t = [150, 150, 150, random(100,255)];
         }
+
         this.attackBool = false;
         this.dead = false;
         this.victim = undefined;
@@ -221,7 +188,6 @@ class Boid {
 
 
     attack(boids){
-        // console.log(this.attackBool == false && this.fish == "shark" && this.prey != undefined)
         if (this.attackBool == false && this.fish == "shark" && this.prey != undefined){
             for (var i = 0; i < this.prey.boids.length; i++) {
                 this.victimDIST = p5.Vector.dist(this.position,this.prey.boids[i].position);
@@ -237,7 +203,6 @@ class Boid {
      }
 
      attacking(){
-         // console.log(this.victim)
          if (this.victim != undefined && this.attack == true && this.victimDIST > 50){
              var d = p5.Vector.dist(this.position,this.victim.position);
              this.postion = lerp(this.postion, this.victim.position)
@@ -250,67 +215,22 @@ class Boid {
      }
 
 
-    //
-    //         this.position = lerp()
-    //       var diff = p5.Vector.sub(this.prey.boids[i].position, this.position);
-    //     var steer = createVector(0,0);
-    //     var count = 0;
-    //     // console.log(this.fish == "shark" && this.prey != undefined)
-    //     if (){
-    //
-    //
-    //
-    //               diff.normalize();
-    //               diff.div(d);        // Weight by distance
-    //               steer.add(diff);
-    //               count++;            // Keep track of how many
-    //             }
-    //           }
-    //         // Average -- divide by how many
-    //         if (count > 0) {
-    //           steer.div(count);
-    //         }
-    //
-    //         // As long as the vector is greater than 0
-    //         if (steer.mag() > 0) {
-    //           // Implement Reynolds: Steering = Desired - Velocity
-    //           steer.normalize();
-    //           steer.mult(this.maxspeed);
-    //           steer.sub(this.velocity);
-    //           steer.limit(this.maxforce);
-    //         }
-    //
-    //     }
-    //     console.log(diff)
-    //     return steer;
-    // }
-
     drawFishy(){
         // var fishy;
         let randomBool = random()
         if (this.fish == "fish"){
         if (randomBool > .5){
-        //     if (randomBool > .5){
-        //         // return squid1
                 return fish1
-                // return shark1
         } else {
-        //     // return squid2
             return fish2
-            // return shark2
-        //     }
     }} else if (this.fish == "shark") {
-            if (randomBool > .5){ //need to fix shark swim anim
-        //     // return squid1
-        //     // return fish1
+            if (randomBool > .5){
             return shark1
         } else {
-        // // return squid2
-        //     // return fish2
             return shark2
         }
     }
-    } //size comparison
+    }
 
     run(){
         if (this.fish == "fish") {
@@ -325,8 +245,6 @@ class Boid {
 
     applyForce(force){
          this.acceleration.add(force);
-        // this.acceleration[0]+= force[0];
-        // this.acceleration[1]+= force[1];
     }
 
     flock(boids){
@@ -391,13 +309,12 @@ class Boid {
         fill(127);
         fill("#003366")
         stroke('#0052A2');
-        // drawFoam();
-        // image(foam, foamX, 0); //cool idea, bro.
         push();
         translate(this.position.x,this.position.y);
-        //
-        //
+
         rotate(theta);
+
+        //KEEP for testing purposes.
         // image(boat, 100, 100);
         // fill("black")
         // stroke("white");
@@ -409,17 +326,16 @@ class Boid {
         // pop();
         // push();
         // rotate(theta);
+        //KEEP for testing purposes.
+
         if (this.dead == false){
         tint(this.t[0],this.t[1],this.t[2],this.t[3])
     } else {
         tint(255, 0, 0)
     }
         if (this.fish == "shark"){
-            // console.log(this.prey)
-            // image(this.drawFishy(), this.position.x-500, this.position.y+100);
             image(this.drawFishy(), 0,0)//this.position.x-200, this.position.y-25);
         } else if (this.fish == "fish"){
-            // console.log(this.predator)
             image(this.drawFishy(), 0, 0)//this.position.x, this.position.y);
         }
         pop();
