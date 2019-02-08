@@ -25,7 +25,13 @@ function deviceShaken(){
 }
 
 function setup() {
-var canvas = createCanvas(windowWidth, windowHeight);
+    var canvas = createCanvas(windowWidth, windowHeight);
+
+    if (windowWidth < 2000){
+        canvas = createCanvas(windowWidth, windowHeight);
+    } else {
+        canvas = createCanvas(2000, windowHeight);
+    }
 
   // var canvas = createCanvas(900,1500);
   canvas.parent('sketch-holder');
@@ -62,10 +68,10 @@ for (var i = 0; i < numFish; i++) {
 }
 
 function windowResized() {
-    if (windowWidth < 1500 && windowHeight < 1500){
+    if (windowWidth < 2000){
         resizeCanvas(windowWidth, windowHeight);
     } else {
-        resizeCanvas(1500, 1500);
+        resizeCanvas(2000, windowHeight);
     }
 }
 
