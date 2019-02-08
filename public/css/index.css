@@ -1,0 +1,14 @@
+body {
+ background-color: #f9f9f9;
+ font-family: courier;
+ font-style: normal;
+ padding: 15px;
+ margin: 40px;
+ display:flex;
+ flex-direction: column;
+}
+
+#sketch-holder{
+    /* margin: 15px; */
+    padding:25px;
+}
