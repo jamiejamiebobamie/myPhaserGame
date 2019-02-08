@@ -11,10 +11,17 @@ let squid2;
 let shark1;
 let shark2;
 
+
+
+let shake = false;
+
 let numFish = 50;
 
 let sharks = Math.floor(numFish * .1)
 
+function deviceShaken(){
+    let shake = true;
+}
 
 function setup() {
   var canvas = createCanvas(1000,1000);
@@ -55,7 +62,12 @@ for (var i = 0; i < numFish; i++) {
 
 function draw() {
   // background(51);
-  background("#003366")
+  if (shake == true){
+       background("red")
+  } else {
+      background("#003366")
+  }
+  shake = false;
   flock.run();
   flockShark.run();
   if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
@@ -74,6 +86,7 @@ function mouseDragged() {
         flock.addBoid(new Boid(mouseX,mouseY, "fish"));
     // } else if (flock.lenFish < (numFish*3)) {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
+  // shake = true;
 }
 // }
 
