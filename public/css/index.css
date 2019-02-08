@@ -1,5 +1,5 @@
 body {
- background-color: white
+ background-color: white;
  /* #011a33; */
  /* font-family: courier; */
  /* font-style: normal; */
@@ -7,6 +7,13 @@ body {
  /* margin: 40px; */
  /* display:flex; */
  /* flex-direction: column; */
+ user-select: none;
+ -moz-user-select: none;
+ -webkit-user-drag: none;
+ -webkit-user-select: none;
+ -ms-user-select: none;
+ /* user-drag
+ user-drag: none; */
 }
 
 #sketch-holder{
