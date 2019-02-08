@@ -10,24 +10,25 @@ let squid1;
 let squid2;
 let shark1;
 let shark2;
+let shake;
 
 
 
-let shake = false;
+
 
 let numFish = 50;
 
 let sharks = Math.floor(numFish * .1)
 
 function deviceShaken(){
-    let shake = true;
+    // let shake = true;
 }
 
 function setup() {
   var canvas = createCanvas(1000,1000);
   canvas.parent('sketch-holder');
   imageMode(CENTER);
-
+  shake = false;
   fish1 = loadImage('../images/fish1Resized.png');
   fish2 = loadImage('../images/fish2Resized.png');
   // foam = loadImage('public/rapids_foam.png');
@@ -67,7 +68,7 @@ function draw() {
   } else {
       background("#003366")
   }
-  shake = false;
+  // shake = false;
   flock.run();
   flockShark.run();
   if(Math.abs(p5.Vector.sub(velocity, flock.boids[0]).y) > .65){
@@ -83,12 +84,23 @@ function draw() {
 // Add a new boid into the System
 function mouseDragged() {
     // if (flock.lenShark > sharks){
-        flock.addBoid(new Boid(mouseX,mouseY, "fish"));
+        // flock.addBoid(new Boid(mouseX,mouseY, "fish"));
     // } else if (flock.lenFish < (numFish*3)) {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
   // shake = true;
 }
-// }
+
+function mousePressed() {
+    // if (flock.lenShark > sharks){
+        // flock.addBoid(new Boid(mouseX,mouseY, "fish"));
+    // } else if (flock.lenFish < (numFish*3)) {
+  // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
+  shake = true;
+}
+
+function mouseReleased(){
+       shake = false;
+}
 
 
 class Flock{
