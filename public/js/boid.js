@@ -1,13 +1,9 @@
 var flock;
+var flockShark;
 let velocity;
 let fish1;
 let fish2;
-let foam;
-let foamX;
 let interv;
-let boat;
-let squid1;
-let squid2;
 let shark1;
 let shark2;
 
@@ -27,7 +23,7 @@ function setup() {
     }
   canvas.parent('sketch-holder');
   imageMode(CENTER);
-  shake = false;
+
   fish1 = loadImage('../images/fish1Resized.png');
   fish2 = loadImage('../images/fish2Resized.png');
   shark1 = loadImage('../images/shark1Resized.png');
@@ -61,7 +57,8 @@ function windowResized() {
 }
 
 function draw() {
-  if (shake == true){
+    
+  if (feed == true){
        background("red")
   } else {
       background("#003366")
