@@ -25,7 +25,7 @@ function deviceShaken(){
 }
 
 function setup() {
-  var canvas = createCanvas(950,1500);
+  var canvas = createCanvas(925,1550);
   canvas.parent('sketch-holder');
   imageMode(CENTER);
   shake = false;
