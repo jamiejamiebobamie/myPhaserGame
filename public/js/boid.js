@@ -9,9 +9,9 @@ let shark2;
 
 let feed;
 
-let numFish = 50;
+let numFish = 2//0;
 
-let sharks = Math.floor(numFish * .1)
+let sharks = 1//Math.floor(numFish * .1)
 
 function setup() {
     var canvas = createCanvas(windowWidth, windowHeight);
@@ -113,11 +113,11 @@ class Flock{
 
     addBoid(boid){
         this.boids.push(boid);
-        // if (boid.fish == "fish"){
-        //     this.lenFish += 1;
-        // } else if (boid.fish == "shark"){
-        //     this.lenShark += 1;
-        // }
+        if (boid.fish == "fish"){
+            this.lenFish += 1;
+        } else if (boid.fish == "shark"){
+            this.lenShark += 1;
+        }
     }
 }
 
@@ -165,52 +165,88 @@ class Boid {
             this.t = [150, 150, 150, random(100,255)];
         }
 
-        this.attackBool = false;
+        this.attack = false;
         this.dead = false;
         this.victim = undefined;
         this.victimDIST = 1000;
     }
 
-    eaten(boids){
-        if (this.fish == "fish" && this.predator != undefined){
-            for (var i = 0; i < this.predator.length; i++) {
-                var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
-                if (d < 100){
-                    this.dead = true;
-                }
-              }
-            }
+    // eaten(boids){
+    //     if (this.fish == "fish" && this.predator != undefined){
+    //         for (var i = 0; i < this.predator.length; i++) {
+    //             var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
+    //             if (d < 100){
+    //                 this.dead = true;
+    //             }
+    //           }
+    //         }
+    //
+    //     }
 
-        }
+
+    // attack(boids){
+    //     if (this.attackBool == false && this.fish == "shark" && this.prey != undefined){
+    //         for (var i = 0; i < this.prey.boids.length; i++) {
+    //             this.victimDIST = p5.Vector.dist(this.position,this.prey.boids[i].position);
+    //             // let d = p5.Vector.dist(this.position,this.prey.boids[i].position);
+    //             // console.log(p5.Vector.dist(this.position,this.prey.boids[i].position))
+    //              if (this.victimDIST < 1){
+    //                  this.victim = this.prey.boids[i]
+    //                  console.log(i)
+    //                  this.attackBool = true
+    //              }
+    //          }
+    //      }
+    //  }
+
+     // attacking(){
+     //     if (this.victim != undefined && this.attack == true && this.victimDIST > 50){
+     //         var d = p5.Vector.dist(this.position,this.victim.position);
+     //         this.postion = lerp(this.postion, this.victim.position)
+     //     }
+     //     if (d < 50){
+     //         this.victim.dead == true;
+     //         this.victim = undefined;
+     //         this.attackBool = false;
+     //     }
+     // }
 
 
-    attack(boids){
-        if (this.attackBool == false && this.fish == "shark" && this.prey != undefined){
-            for (var i = 0; i < this.prey.boids.length; i++) {
-                this.victimDIST = p5.Vector.dist(this.position,this.prey.boids[i].position);
-                // let d = p5.Vector.dist(this.position,this.prey.boids[i].position);
-                // console.log(p5.Vector.dist(this.position,this.prey.boids[i].position))
-                 if (this.victimDIST < 1){
-                     this.victim = this.prey.boids[i]
-                     console.log(i)
-                     this.attackBool = true
-                 }
-             }
+     homing(prey){
+         let closest;
+
+
+         if (this.attack ==false){
+             closest = {
+                 number: undefined,
+                 distance: 3000,
+                 boid: undefined
+             };
+             for (var i = 0; i < prey.boids.length; i++) {
+               var d = p5.Vector.dist(this.position, prey.boids[i].position);
+               if (d < closest.distance){
+                   closest.number = i
+                   closest.boid = prey.boids[i]
+                   closest.distance = d
+               }
+               this.attack = true
+       }
+         //
+         //   if ((d > 0) && (d < neighbordist)) {
+         //     sum.add(prey[i].position); // Add location
+         //     count++;
+         //   }
+         // }
+         // if (count > 0) {
+         //   sum.div(count);
+         //   return this.seek(sum);  // Steer towards the location
+         // } else {
+         //   return createVector(0,0);
+         // }
+
          }
+         return closest
      }
-
-     attacking(){
-         if (this.victim != undefined && this.attack == true && this.victimDIST > 50){
-             var d = p5.Vector.dist(this.position,this.victim.position);
-             this.postion = lerp(this.postion, this.victim.position)
-         }
-         if (d < 50){
-             this.victim.dead == true;
-             this.victim = undefined;
-             this.attackBool = false;
-         }
-     }
-
 
     drawFishy(){
         // var fishy;
@@ -246,11 +282,19 @@ class Boid {
 
     flock(boids){
         if (this.fish == "fish"){
-            this.eaten(this.predator)
+            // this.eaten(this.predator)
+            // console.log(this.predator)
         }
         if (this.fish == "shark"){
-            this.attack(boids);
-            this.attacking()
+            if (feed == true){
+            console.log(this.homing(this.prey))
+
+        } else {
+            this.attack = false;
+        }
+            // console.log(this.prey)
+            // this.attack(boids);
+            // this.attacking()
             // console.log(this.attackBool)
             // var atk = this.attack(boids); //doesn't work
             // atk.mult(3.0);
@@ -324,7 +368,7 @@ class Boid {
         // push();
         // rotate(theta);
         //KEEP for testing purposes.
-        
+
         if (this.fish == "shark"){
             tint(this.t[0],this.t[1],this.t[2],this.t[3])
             image(this.drawFishy(), 0,0)//this.position.x-200, this.position.y-25);
