@@ -9,9 +9,9 @@ let shark2;
 
 let feed;
 
-let numFish = 2//0;
+let numFish = 50;
 
-let sharks = 1//Math.floor(numFish * .1)
+let sharks = Math.floor(numFish * .1)
 
 function setup() {
     var canvas = createCanvas(windowWidth, windowHeight);
@@ -26,6 +26,8 @@ function setup() {
 
   fish1 = loadImage('../images/fish1Resized.png');
   fish2 = loadImage('../images/fish2Resized.png');
+  fish1WHITE = loadImage('../images/fish1ResizedWHITE.png');
+  fish2WHITE = loadImage('../images/fish2ResizedWHITE.png');
   shark1 = loadImage('../images/shark1Resized.png');
   shark2 = loadImage('../images/shark2Resized.png');
 
@@ -169,6 +171,10 @@ class Boid {
         this.dead = false;
         this.victim = undefined;
         this.victimDIST = 1000;
+        this.storedMaxSpeed = this.maxspeed;
+        this.enter = true;
+        this.target = undefined;
+        this.preyPredator = undefined;
     }
 
     // eaten(boids){
@@ -252,18 +258,27 @@ class Boid {
         // var fishy;
         let randomBool = random()
         if (this.fish == "fish"){
-        if (randomBool > .5){
-                return fish1
-        } else {
-            return fish2
-    }} else if (this.fish == "shark") {
+            if (feed){
+                if (randomBool > .5){
+                        return fish1WHITE
+                } else {
+                    return fish2WHITE
+                }
+            } else {
+                if (randomBool > .5){
+                    return fish1
+                } else {
+                    return fish2
+                }
+            }
+        } else if (this.fish == "shark") {
             if (randomBool > .5){
             return shark1
         } else {
             return shark2
         }
     }
-    }
+}
 
     run(){
         if (this.fish == "fish") {
@@ -286,11 +301,21 @@ class Boid {
             // console.log(this.predator)
         }
         if (this.fish == "shark"){
-            if (feed == true){
-            console.log(this.homing(this.prey))
-
-        } else {
-            this.attack = false;
+            if (feed == true) {
+                if (this.enter == true){
+                    this.target = this.homing(this.prey)
+                    this.preyPredator = new Flock()
+                    this.preyPredator.addBoid(this)
+                    this.preyPredator.addBoid(this.target.boid)
+                    // this.maxspeed = 50;
+                    // this.maxforce = 5;
+                    this.enter = false;
+                }
+            console.log(this.target, this.preyPredator)
+            } else {
+                // this.maxspeed = this.storedMaxSpeed;
+                this.attack = false;
+                this.enter = true;
         }
             // console.log(this.prey)
             // this.attack(boids);
@@ -300,6 +325,7 @@ class Boid {
             // atk.mult(3.0);
             // this.applyForce(atk);
         }
+
         var sep = this.separate(boids);   // Separation
         var ali = this.align(boids);      // Alignment
         var coh = this.cohesion(boids);   // Cohesion
@@ -374,7 +400,7 @@ class Boid {
             image(this.drawFishy(), 0,0)//this.position.x-200, this.position.y-25);
         } else if (this.fish == "fish"){
             if (feed == true){
-            tint(255,100,100)
+            tint(255,255,255,200)
             // filter(THRESHOLD)
             }else{
             tint(this.t[0],this.t[1],this.t[2],this.t[3])
