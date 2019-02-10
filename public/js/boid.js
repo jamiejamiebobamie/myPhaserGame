@@ -28,13 +28,19 @@ function setup() {
 
   fish1 = loadImage('../images/fish1Resized.png');
   fish2 = loadImage('../images/fish2Resized.png');
-
   fish1WHITE = loadImage('../images/fish1ResizedWHITE.png');
   fish2WHITE = loadImage('../images/fish2ResizedWHITE.png');
+
+  // fish1 = loadImage('../images/fish1.png');
+  // fish2 = loadImage('../images/fish2.png');
+  // fish1WHITE = loadImage('../images/fish1_feed.png');
+  // fish2WHITE = loadImage('../images/fish2_feed.png');
+
+
   shark1 = loadImage('../images/shark1Resized.png');
   shark2 = loadImage('../images/shark2Resized.png');
 
-spawn_points = [ [0,0], [0, windowWidth], [0, windowHeight], [windowWidth, windowHeight] ]
+  spawn_points = [ [0,0], [0, windowWidth], [0, windowHeight], [windowWidth, windowHeight] ]
 
   flock = new Flock();
   flockShark = new FlockShark();
