@@ -13,6 +13,8 @@ let numFish = 50;
 
 let sharks = Math.floor(numFish * .1)
 
+let spawn_points;
+
 function setup() {
     var canvas = createCanvas(windowWidth, windowHeight);
 
@@ -26,16 +28,21 @@ function setup() {
 
   fish1 = loadImage('../images/fish1Resized.png');
   fish2 = loadImage('../images/fish2Resized.png');
+
   fish1WHITE = loadImage('../images/fish1ResizedWHITE.png');
   fish2WHITE = loadImage('../images/fish2ResizedWHITE.png');
   shark1 = loadImage('../images/shark1Resized.png');
   shark2 = loadImage('../images/shark2Resized.png');
 
+spawn_points = [ [0,0], [0, windowWidth], [0, windowHeight], [windowWidth, windowHeight] ]
+
   flock = new Flock();
   flockShark = new FlockShark();
   // Add an initial set of boids into the system
   for (var i = 0; i < numFish; i++) {
-    var b = new Boid(width/2,height/2, "fish");
+      var b = new Boid(spawn_points[Math.floor(Math.random(4))][0],spawn_points[Math.floor(Math.random(4))][1], "fish");
+
+    // var b = new Boid(width/2,height/2, "fish");
     flock.addBoid(b);
 }
 
