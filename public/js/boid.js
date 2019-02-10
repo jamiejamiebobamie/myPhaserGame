@@ -190,47 +190,6 @@ class Boid {
         this.preyPredator = undefined;
     }
 
-    // eaten(boids){
-    //     if (this.fish == "fish" && this.predator != undefined){
-    //         for (var i = 0; i < this.predator.length; i++) {
-    //             var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
-    //             if (d < 100){
-    //                 this.dead = true;
-    //             }
-    //           }
-    //         }
-    //
-    //     }
-
-
-    // attack(boids){
-    //     if (this.attackBool == false && this.fish == "shark" && this.prey != undefined){
-    //         for (var i = 0; i < this.prey.boids.length; i++) {
-    //             this.victimDIST = p5.Vector.dist(this.position,this.prey.boids[i].position);
-    //             // let d = p5.Vector.dist(this.position,this.prey.boids[i].position);
-    //             // console.log(p5.Vector.dist(this.position,this.prey.boids[i].position))
-    //              if (this.victimDIST < 1){
-    //                  this.victim = this.prey.boids[i]
-    //                  console.log(i)
-    //                  this.attackBool = true
-    //              }
-    //          }
-    //      }
-    //  }
-
-     // attacking(){
-     //     if (this.victim != undefined && this.attack == true && this.victimDIST > 50){
-     //         var d = p5.Vector.dist(this.position,this.victim.position);
-     //         this.postion = lerp(this.postion, this.victim.position)
-     //     }
-     //     if (d < 50){
-     //         this.victim.dead == true;
-     //         this.victim = undefined;
-     //         this.attackBool = false;
-     //     }
-     // }
-
-
      homing(prey){
          let closest;
 
@@ -250,19 +209,6 @@ class Boid {
                }
                this.attack = true
        }
-         //
-         //   if ((d > 0) && (d < neighbordist)) {
-         //     sum.add(prey[i].position); // Add location
-         //     count++;
-         //   }
-         // }
-         // if (count > 0) {
-         //   sum.div(count);
-         //   return this.seek(sum);  // Steer towards the location
-         // } else {
-         //   return createVector(0,0);
-         // }
-
          }
          return closest
      }
@@ -294,12 +240,42 @@ class Boid {
 }
 
     run(){
-        if (this.fish == "fish") {
+        if (this.fish == "fish"){
             this.flock(flock.boids);
+            this.update();
+            // this.eaten(this.predator)
+            // console.log(this.predator)
         } else if (this.fish == "shark"){
-            this.flock(flockShark.boids);
+            if (feed == true) {
+                if (this.enter == true){
+                    this.target = this.homing(this.prey)
+                    // this.preyPredator = new Flock()
+                    // this.preyPredator.addBoid(this)
+                    // this.preyPredator.addBoid(this.target.boid)
+                    // this.maxspeed = 50;
+                    // this.maxforce = 5;
+                    this.enter = false;
+                }
+
+            console.log(this.target.boid.position.x);// this.preyPredator)
+            let x = this.position.x - this.target.boid.position.x;
+            let y = this.position.y - this.target.boid.position.y;
+            let goHere = createVector(x,y);
+            // let diff = p5.Vector.sub(this.position, this.target.boid.position);
+            goHere.normalize();
+            console.log(goHere);
+            this.position = p5.Vector.add(this.position, goHere);
+            // this.position = this.postion + goHere*15
+
+            } else {
+                this.flock(flockShark.boids);
+                this.update();
+                // this.maxspeed = this.storedMaxSpeed;
+                this.attack = false;
+                this.enter = true;
         }
-        this.update();
+        }
+
         this.borders();
         this.render();
     }
@@ -309,49 +285,29 @@ class Boid {
     }
 
     flock(boids){
-        if (this.fish == "fish"){
-            // this.eaten(this.predator)
-            // console.log(this.predator)
-        }
-        if (this.fish == "shark"){
-            if (feed == true) {
-                if (this.enter == true){
-                    this.target = this.homing(this.prey)
-                    this.preyPredator = new Flock()
-                    this.preyPredator.addBoid(this)
-                    this.preyPredator.addBoid(this.target.boid)
-                    // this.maxspeed = 50;
-                    // this.maxforce = 5;
-                    this.enter = false;
-                }
-            console.log(this.target, this.preyPredator)
-            } else {
-                // this.maxspeed = this.storedMaxSpeed;
-                this.attack = false;
-                this.enter = true;
-        }
-            // console.log(this.prey)
-            // this.attack(boids);
-            // this.attacking()
-            // console.log(this.attackBool)
-            // var atk = this.attack(boids); //doesn't work
-            // atk.mult(3.0);
-            // this.applyForce(atk);
-        }
-
         var sep = this.separate(boids);   // Separation
         var ali = this.align(boids);      // Alignment
         var coh = this.cohesion(boids);   // Cohesion
+
+        //******--------
+        //WRITE A NEW FUNCTION
+        // var atk = this.attack(boids); // Attack
 
         // Arbitrarily weight these forces
         sep.mult(1.5);
         ali.mult(1.0);
         coh.mult(1.0);
 
+        //******--------
+        //atk.multi(int) the feed boolean should change this attribute globally among all sharks, overriding sep, ali, coh.
+
         // Add the force vectors to acceleration
         this.applyForce(sep);
         this.applyForce(ali);
         this.applyForce(coh);
+
+        //******--------
+        this.applyForce(atk);
 
     }
 
