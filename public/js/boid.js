@@ -263,6 +263,7 @@ class Boid {
             let goHere = createVector(x,y);
             // let diff = p5.Vector.sub(this.position, this.target.boid.position);
             goHere.normalize();
+            goHere = goHere.mult(50);
             console.log(goHere);
             this.position = p5.Vector.add(this.position, goHere);
             // this.position = this.postion + goHere*15
@@ -307,7 +308,7 @@ class Boid {
         this.applyForce(coh);
 
         //******--------
-        this.applyForce(atk);
+        // this.applyForce(atk);
 
     }
 
