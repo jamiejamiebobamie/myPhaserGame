@@ -6,12 +6,12 @@ let fish2;
 let interv;
 let shark1;
 let shark2;
-
+let trans;
 let feed;
 
 let numFish = 50;
 
-let sharks = Math.floor(numFish * .1)
+let sharks = 3//Math.floor(numFish * .1)
 
 let fish_spawn_points;
 let shark_spawn_points;
@@ -31,6 +31,7 @@ function setup() {
   fish2 = loadImage('../images/fish2Resized.png');
   fish1WHITE = loadImage('../images/fish1ResizedWHITE.png');
   fish2WHITE = loadImage('../images/fish2ResizedWHITE.png');
+  trans = loadImage('../images/transparency.png');
 
   // fish1 = loadImage('../images/fish1.png');
   // fish2 = loadImage('../images/fish2.png');
@@ -208,13 +209,14 @@ class Boid {
                  boid: undefined
              };
              for (var i = 0; i < prey.boids.length; i++) {
+                 if (prey.boids[i].dead == false){
                var d = p5.Vector.dist(this.position, prey.boids[i].position);
                if (d < closest.distance){
                    closest.number = i
                    closest.boid = prey.boids[i]
                    closest.boid.victim = true;
                    closest.distance = d
-               }
+               }}
                this.attackBool = true
        }
          }
@@ -239,8 +241,8 @@ class Boid {
                     return fish2
                 }
             }
-        } else {
-
+        } else if (this.dead == true){
+            return trans
         }
     } else if (this.fish == "shark") {
             if (randomBool > .5){
@@ -496,13 +498,15 @@ class Boid {
         }
 
     deaders(){
-
             for (var i = 0; i < this.predator.lenShark; i++) {
             // console.log(this.predator.boids[i])
               var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
-              // console.log(d)
-              if (d < 5000) {
-                  this.dead == true
+              console.log(d)
+              if (d < 20) {
+                  this.dead = true
+                  this.target = undefined;
+                  this.enter = true;
+                  // console.log(this.dead)
               }
           }
     }
