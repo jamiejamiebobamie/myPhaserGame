@@ -13,7 +13,8 @@ let numFish = 50;
 
 let sharks = Math.floor(numFish * .1)
 
-let spawn_points;
+let fish_spawn_points;
+let shark_spawn_points;
 
 function setup() {
     var canvas = createCanvas(windowWidth, windowHeight);
@@ -40,20 +41,23 @@ function setup() {
   shark1 = loadImage('../images/shark1Resized.png');
   shark2 = loadImage('../images/shark2Resized.png');
 
-  spawn_points = [ [0,0], [0, windowWidth], [0, windowHeight], [windowWidth, windowHeight] ]
+  fish_spawn_points = [ [0,0], [0, windowWidth], [0, windowHeight], [windowWidth, windowHeight] ]
+  shark_spawn_points = [ [width/2,height/2], [width/4,height/2], [width/4,height/8], [width/2,height/4], [width/2,height/1.1] ]
 
   flock = new Flock();
   flockShark = new FlockShark();
   // Add an initial set of boids into the system
   for (var i = 0; i < numFish; i++) {
-      var b = new Boid(spawn_points[Math.floor(Math.random(4))][0],spawn_points[Math.floor(Math.random(4))][1], "fish");
+      let rand = Math.floor(Math.random()*4)
+      var b = new Boid(fish_spawn_points[rand][0],fish_spawn_points[rand][1], "fish");
 
     // var b = new Boid(width/2,height/2, "fish");
     flock.addBoid(b);
 }
 
 for (var i = 0; i < sharks; i++) {
-  var b = new Boid(width/2,height/2, "shark", flock);
+    let rand = Math.floor(Math.random()*5)
+  var b = new Boid(shark_spawn_points[rand][0],shark_spawn_points[rand][1], "shark", flock);
   flockShark.addBoid(b);
 }
 
@@ -494,9 +498,9 @@ class Boid {
     deaders(){
 
             for (var i = 0; i < this.predator.lenShark; i++) {
-            console.log(this.predator.boids[i])
+            // console.log(this.predator.boids[i])
               var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
-              console.log(d)
+              // console.log(d)
               if (d < 5000) {
                   this.dead == true
               }
