@@ -103,6 +103,9 @@ function mouseDragged() {
     // } else if (flock.lenFish < (numFish*3)) {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
   // shake = true;
+  if (!noMoreFish(flock)){
+      flock.addBoid(new Boid(mouseX,mouseY, "fish"));
+  }
 }
 
 function noMoreFish(flock){
@@ -112,7 +115,8 @@ function noMoreFish(flock){
             count += 1
         }
     }
-    return !(count == flock.length)
+    console.log(count >= flock.length)
+    return !(count >= flock.length)
 }
 
 function mousePressed() {
@@ -122,8 +126,9 @@ function mousePressed() {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
   if (noMoreFish(flock)){
         feed = true;
+  } else {
+      flock.addBoid(new Boid(mouseX,mouseY, "fish"));
   }
-
 }
 
 function mouseReleased(){
@@ -514,8 +519,8 @@ class Boid {
             for (var i = 0; i < this.predator.lenShark; i++) {
             // console.log(this.predator.boids[i])
               var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
-              console.log(d)
-              if (d < 25) {
+              // console.log(d)
+              if (d < 50) {
                   this.dead = true
                   this.target = undefined;
                   this.enter = true;
