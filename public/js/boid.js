@@ -105,12 +105,25 @@ function mouseDragged() {
   // shake = true;
 }
 
+function noMoreFish(flock){
+    let count = 0;
+    for (let i = 0; i < flock.length; i++){
+        if (flock.boids.dead){
+            count += 1
+        }
+    }
+    return !(count == flock.length)
+}
+
 function mousePressed() {
     // if (flock.lenShark > sharks){
         // flock.addBoid(new Boid(mouseX,mouseY, "fish"));
     // } else if (flock.lenFish < (numFish*3)) {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
-  feed = true;
+  if (noMoreFish(flock)){
+        feed = true;
+  }
+
 }
 
 function mouseReleased(){
@@ -271,7 +284,7 @@ class Boid {
                     // this.preyPredator = new Flock()
                     // this.preyPredator.addBoid(this)
                     // this.preyPredator.addBoid(this.target.boid)
-                    this.maxspeed = 25;
+                    this.maxspeed = 35;
                     this.maxforce = .3;
                     this.enter = false;
                 }
@@ -502,7 +515,7 @@ class Boid {
             // console.log(this.predator.boids[i])
               var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
               console.log(d)
-              if (d < 20) {
+              if (d < 25) {
                   this.dead = true
                   this.target = undefined;
                   this.enter = true;
@@ -510,5 +523,4 @@ class Boid {
               }
           }
     }
-
 }
