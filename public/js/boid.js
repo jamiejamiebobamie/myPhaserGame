@@ -134,6 +134,10 @@ class Flock{
             this.lenShark += 1;
         }
     }
+    //
+    // removeBoid(boid){
+    //     this.boids.remove(boid);
+    // }
 }
 
 class FlockShark{
@@ -180,21 +184,20 @@ class Boid {
             this.t = [150, 150, 150, random(100,255)];
         }
 
-        this.attack = false;
+        this.attackBool = false;
         this.dead = false;
-        this.victim = undefined;
+        this.victim = false;
         this.victimDIST = 1000;
         this.storedMaxSpeed = this.maxspeed;
         this.enter = true;
         this.target = undefined;
         this.preyPredator = undefined;
+        this.attackMult = 0.0;
     }
 
      homing(prey){
          let closest;
-
-
-         if (this.attack ==false){
+         if (this.attackBool ==false){
              closest = {
                  number: undefined,
                  distance: 3000,
@@ -205,9 +208,10 @@ class Boid {
                if (d < closest.distance){
                    closest.number = i
                    closest.boid = prey.boids[i]
+                   closest.boid.victim = true;
                    closest.distance = d
                }
-               this.attack = true
+               this.attackBool = true
        }
          }
          return closest
@@ -217,6 +221,7 @@ class Boid {
         // var fishy;
         let randomBool = random()
         if (this.fish == "fish"){
+             if (this.dead == false){
             if (feed){
                 if (randomBool > .5){
                         return fish1WHITE
@@ -230,49 +235,58 @@ class Boid {
                     return fish2
                 }
             }
-        } else if (this.fish == "shark") {
+        } else {
+
+        }
+    } else if (this.fish == "shark") {
             if (randomBool > .5){
             return shark1
         } else {
             return shark2
         }
-    }
+        }
 }
 
     run(){
         if (this.fish == "fish"){
             this.flock(flock.boids);
             this.update();
+            if (feed == true){
+            this.deaders();
             // this.eaten(this.predator)
             // console.log(this.predator)
+        }
         } else if (this.fish == "shark"){
+            this.flock(flockShark.boids);
+            this.update();
             if (feed == true) {
                 if (this.enter == true){
                     this.target = this.homing(this.prey)
                     // this.preyPredator = new Flock()
                     // this.preyPredator.addBoid(this)
                     // this.preyPredator.addBoid(this.target.boid)
-                    // this.maxspeed = 50;
-                    // this.maxforce = 5;
+                    this.maxspeed = 25;
+                    this.maxforce = .3;
                     this.enter = false;
                 }
-
-            console.log(this.target.boid.position.x);// this.preyPredator)
-            let x = this.position.x - this.target.boid.position.x;
-            let y = this.position.y - this.target.boid.position.y;
-            let goHere = createVector(x,y);
-            // let diff = p5.Vector.sub(this.position, this.target.boid.position);
-            goHere.normalize();
-            goHere = goHere.mult(50);
-            console.log(goHere);
-            this.position = p5.Vector.add(this.position, goHere);
+                this.attackMult = 7;
+            // console.log(this.target);// this.preyPredator)
+            // let x = this.position.x - this.target.boid.position.x;
+            // let y = this.position.y - this.target.boid.position.y;
+            // let goHere = createVector(x,y);
+            // // let diff = p5.Vector.sub(this.position, this.target.boid.position);
+            // goHere.normalize();
+            // goHere = goHere.mult(50);
+            // console.log(goHere);
+            // this.position = p5.Vector.add(this.position, goHere);
             // this.position = this.postion + goHere*15
 
             } else {
-                this.flock(flockShark.boids);
-                this.update();
-                // this.maxspeed = this.storedMaxSpeed;
-                this.attack = false;
+                this.target = undefined;
+                this.attackMult = 0;
+                this.maxforce = .05;
+                this.maxspeed = this.storedMaxSpeed;
+                this.attackBool = false;
                 this.enter = true;
         }
         }
@@ -292,7 +306,7 @@ class Boid {
 
         //******--------
         //WRITE A NEW FUNCTION
-        // var atk = this.attack(boids); // Attack
+        var atk = this.attack(this.target); // Attack
 
         // Arbitrarily weight these forces
         sep.mult(1.5);
@@ -300,7 +314,7 @@ class Boid {
         coh.mult(1.0);
 
         //******--------
-        //atk.multi(int) the feed boolean should change this attribute globally among all sharks, overriding sep, ali, coh.
+        atk.mult(5.0); //the feed boolean should change this attribute globally among all sharks, overriding sep, ali, coh.
 
         // Add the force vectors to acceleration
         this.applyForce(sep);
@@ -308,7 +322,7 @@ class Boid {
         this.applyForce(coh);
 
         //******--------
-        // this.applyForce(atk);
+        this.applyForce(atk);
 
     }
 
@@ -332,6 +346,7 @@ class Boid {
         // Steering = Desired minus Velocity
         var steer = p5.Vector.sub(desired,this.velocity);
         steer.limit(this.maxforce);  // Limit to maximum steering force
+        // console.log(target)
         return steer;
     }
 
@@ -339,6 +354,7 @@ class Boid {
     render(){
         // Draw a triangle rotated in the direction of velocity
         if (this.fish == "fish"){
+            // console.log(this.dead)
         var theta = this.velocity.heading() +radians(180)//+ radians(90);
     } else if (this.fish == "shark"){
         var theta = this.velocity.heading()// - radians(180)//
@@ -465,6 +481,26 @@ class Boid {
         } else {
           return createVector(0,0);
         }
+    }
+
+    attack(target){
+        if (target != undefined){
+          return this.seek(target.boid.position);  // Steer towards the location
+            } else {
+                return createVector(0,0);
+            }
+        }
+
+    deaders(){
+
+            for (var i = 0; i < this.predator.lenShark; i++) {
+            console.log(this.predator.boids[i])
+              var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
+              console.log(d)
+              if (d < 5000) {
+                  this.dead == true
+              }
+          }
     }
 
 }
