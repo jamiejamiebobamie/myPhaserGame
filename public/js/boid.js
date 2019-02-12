@@ -127,8 +127,6 @@ function mousePressed() {
   if (flock.boids.length != flock.eaten.length){
         feed = true;
   } else {
-      flock = []
-}
       flock.addBoid(new Boid(mouseX,mouseY, "fish"));
   }
 }
