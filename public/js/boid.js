@@ -50,7 +50,7 @@ function setup() {
   // Add an initial set of boids into the system
   for (var i = 0; i < numFish; i++) {
       let rand = Math.floor(Math.random()*4)
-      var b = new Boid(fish_spawn_points[rand][0],fish_spawn_points[rand][1], "fish");
+      var b = new Boid(Math.random()*windowWidth/4,Math.random()*windowHeight/4, "fish");
 
     // var b = new Boid(width/2,height/2, "fish");
     flock.addBoid(b);
@@ -58,7 +58,7 @@ function setup() {
 
 for (var i = 0; i < sharks; i++) {
     let rand = Math.floor(Math.random()*5)
-  var b = new Boid(shark_spawn_points[rand][0],shark_spawn_points[rand][1], "shark", flock);
+  var b = new Boid(Math.random()*windowWidth,Math.random()*windowHeight, "shark", flock);
   flockShark.addBoid(b);
 }
 
@@ -141,11 +141,11 @@ class Flock{
         this.boids = [];
         this.lenShark = 0;
         this.lenFish = 0;
-        this.eaten = [];
+        this.eaten = 0;
     }
 
     run(){
-        console.log(this.eaten.length)
+        console.log(this.eaten, this.lenFish)
         for (var i = 0; i < this.boids.length; i++) {
           this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
         }
@@ -192,7 +192,8 @@ class FlockShark{
 class Boid {
     constructor(x, y, fish="fish", prey=undefined, predator=undefined){
         this.acceleration = createVector(0,0);
-        this.velocity = createVector(random(-1,1),random(-1,1));
+        this.velocity = createVector(random(-10,-15),random(-10,-15))
+        // this.velocity = createVector(random(-1,1),random(-1,1));
         this.position = createVector(x,y);
         this.r = 20.0; //3.0
         this.maxforce = 0.05; // Maximum steering force
@@ -275,6 +276,11 @@ class Boid {
 
     run(){
         if (this.fish == "fish"){
+            // if (this.dead){
+            //     flock.eaten+=1
+            //     flock.lenFish-=1
+            //     this.dead = false
+            // }
             this.flock(flock.boids);
             this.update();
             if (feed == true){
@@ -430,7 +436,7 @@ class Boid {
 
     separate(boids){
         if (this.fish == "fish"){
-            var desiredseparation = 25.0; //25.0
+            var desiredseparation = 45.0; //25.0
         } else if (this.fish == "shark"){
             var desiredseparation = 70.0; //25.0
         }
@@ -466,7 +472,7 @@ class Boid {
     }
 
     align(boids){
-        var neighbordist = 70;
+        var neighbordist = 500; //70
         var sum = createVector(0,0);
         var count = 0;
         for (var i = 0; i < boids.length; i++) {
@@ -489,7 +495,7 @@ class Boid {
     }
 
     cohesion(boids){
-        var neighbordist = 70;
+        var neighbordist = 500; //70
         var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
         var count = 0;
         for (var i = 0; i < boids.length; i++) {
@@ -522,7 +528,6 @@ class Boid {
               var d = p5.Vector.dist(this.position,flockShark.boids[i].position);
               // console.log(d)
               if (d < 50) {
-                  flock.eaten.push(this)
                   this.dead = true;
                   this.target = undefined;
                   this.enter = true;
