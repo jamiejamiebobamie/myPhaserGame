@@ -124,11 +124,11 @@ function mousePressed() {
         // flock.addBoid(new Boid(mouseX,mouseY, "fish"));
     // } else if (flock.lenFish < (numFish*3)) {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
-  if (flock.boids.length != flock.eaten.length){
+  // if (flock.boids.length > flock.eaten.length){
         feed = true;
-  } else {
-      flock.addBoid(new Boid(mouseX,mouseY, "fish"));
-  }
+  // } else {
+  //     flock.addBoid(new Boid(mouseX,mouseY, "fish"));
+  // }
 }
 
 function mouseReleased(){
@@ -145,6 +145,7 @@ class Flock{
     }
 
     run(){
+        console.log(this.eaten.length)
         for (var i = 0; i < this.boids.length; i++) {
           this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
         }
@@ -515,13 +516,13 @@ class Boid {
         }
 
     deaders(){
-            for (var i = 0; i < this.predator.boids.length; i++) {
+            for (var i = 0; i < flockShark.boids.length; i++) {
                 //this.predator.lenShark
             // console.log(this.predator.boids.length)
-              var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
+              var d = p5.Vector.dist(this.position,flockShark.boids[i].position);
               // console.log(d)
               if (d < 50) {
-                  flock.eaten.push(this.predator.boids[i])
+                  flock.eaten.push(this)
                   this.dead = true;
                   this.target = undefined;
                   this.enter = true;
