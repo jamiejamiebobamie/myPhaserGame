@@ -11,7 +11,7 @@ let feed;
 
 let numFish = 50;
 
-let sharks = 3//Math.floor(numFish * .1)
+let sharks = 2//Math.floor(numFish * .1)
 
 let fish_spawn_points;
 let shark_spawn_points;
@@ -110,13 +110,13 @@ function mouseDragged() {
 
 function noMoreFish(flock){
     let count = 0;
-    for (let i = 0; i < flock.length; i++){
+    for (let i = 0; i < flock.lenFish; i++){
         if (flock.boids.dead){
-            count += 1
+            flock.lenFish -= 1
+            console.log(flock.lenFish)
         }
     }
-    console.log(count >= flock.length)
-    return !(count >= flock.length)
+    // console.log(flock.lenFish)
 }
 
 function mousePressed() {
@@ -124,9 +124,11 @@ function mousePressed() {
         // flock.addBoid(new Boid(mouseX,mouseY, "fish"));
     // } else if (flock.lenFish < (numFish*3)) {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
-  if (noMoreFish(flock)){
+  if (flock.boids.length != flock.eaten.length){
         feed = true;
   } else {
+      flock = []
+}
       flock.addBoid(new Boid(mouseX,mouseY, "fish"));
   }
 }
@@ -141,6 +143,7 @@ class Flock{
         this.boids = [];
         this.lenShark = 0;
         this.lenFish = 0;
+        this.eaten = [];
     }
 
     run(){
@@ -281,6 +284,7 @@ class Boid {
             // console.log(this.predator)
         }
         } else if (this.fish == "shark"){
+            // if (this.prey.lenFish != 0){
             this.flock(flockShark.boids);
             this.update();
             if (feed == true) {
@@ -289,8 +293,8 @@ class Boid {
                     // this.preyPredator = new Flock()
                     // this.preyPredator.addBoid(this)
                     // this.preyPredator.addBoid(this.target.boid)
-                    this.maxspeed = 35;
-                    this.maxforce = .3;
+                    this.maxspeed = 50; //35
+                    this.maxforce = .7; //.3
                     this.enter = false;
                 }
                 this.attackMult = 7;
@@ -314,6 +318,7 @@ class Boid {
                 this.enter = true;
         }
         }
+    // }
 
         this.borders();
         this.render();
@@ -392,7 +397,6 @@ class Boid {
         rotate(theta);
 
         //KEEP for testing purposes.
-        // image(boat, 100, 100);
         // fill("black")
         // stroke("white");
         // beginShape();
@@ -400,14 +404,11 @@ class Boid {
         // vertex(-this.r, this.r*2);
         // vertex(this.r, this.r*2);
         // endShape(CLOSE);
-        // pop();
-        // push();
-        // rotate(theta);
         //KEEP for testing purposes.
 
         if (this.fish == "shark"){
             tint(this.t[0],this.t[1],this.t[2],this.t[3])
-            image(this.drawFishy(), 0,0)//this.position.x-200, this.position.y-25);
+            image(this.drawFishy(), -100,0)//this.position.x-200, this.position.y-25);
         } else if (this.fish == "fish"){
             if (feed == true){
             tint(255,255,255,200)
@@ -432,7 +433,7 @@ class Boid {
         if (this.fish == "fish"){
             var desiredseparation = 25.0; //25.0
         } else if (this.fish == "shark"){
-            var desiredseparation = 50.0; //25.0
+            var desiredseparation = 70.0; //25.0
         }
         var steer = createVector(0,0);
         var count = 0;
@@ -510,18 +511,20 @@ class Boid {
     attack(target){
         if (target != undefined){
           return this.seek(target.boid.position);  // Steer towards the location
-            } else {
+      } else {
                 return createVector(0,0);
             }
         }
 
     deaders(){
-            for (var i = 0; i < this.predator.lenShark; i++) {
-            // console.log(this.predator.boids[i])
+            for (var i = 0; i < this.predator.boids.length; i++) {
+                //this.predator.lenShark
+            // console.log(this.predator.boids.length)
               var d = p5.Vector.dist(this.position,this.predator.boids[i].position);
               // console.log(d)
               if (d < 50) {
-                  this.dead = true
+                  flock.eaten.push(this.predator.boids[i])
+                  this.dead = true;
                   this.target = undefined;
                   this.enter = true;
                   // console.log(this.dead)
