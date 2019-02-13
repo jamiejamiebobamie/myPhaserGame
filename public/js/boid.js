@@ -229,9 +229,9 @@ class Boid {
                  distance: 3000,
                  boid: undefined
              };
-             for (var i = 0; i < prey.boids.length; i++) {
-                 if (prey.boids[i].dead == false){
-               var d = p5.Vector.dist(this.position, prey.boids[i].position);
+             for (var i = 0; i < flock.boids.length; i++) {
+                 if (flock.boids[i].dead == false){
+               var d = p5.Vector.dist(this.position, flock.boids[i].position);
                if (d < closest.distance){
                    closest.number = i
                    closest.boid = prey.boids[i]
@@ -283,7 +283,7 @@ class Boid {
             // }
             this.flock(flock.boids);
             this.update();
-            if (feed == true){
+            if (feed == true && this.dead == false){
             this.deaders();
             // this.eaten(this.predator)
             // console.log(this.predator)
