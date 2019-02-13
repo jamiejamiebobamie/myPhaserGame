@@ -16,6 +16,11 @@ body {
  -ms-user-select: none;
  /* user-drag
  user-drag: none; */
+
+height: 100%;
+overflow: hidden;
+width: 100%;
+position: fixed;
 }
 
 #sketch-holder{
