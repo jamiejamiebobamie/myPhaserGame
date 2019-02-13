@@ -11,7 +11,7 @@ let feed;
 
 let numFish = 50;
 
-let sharks = 2//Math.floor(numFish * .1)
+let sharks = 1//Math.floor(numFish * .1)
 
 let fish_spawn_points;
 let shark_spawn_points;
@@ -103,21 +103,26 @@ function mouseDragged() {
     // } else if (flock.lenFish < (numFish*3)) {
   // flock.addBoid(new Boid(mouseX,mouseY, "shark"));
   // shake = true;
-  if (!noMoreFish(flock)){
-      flock.addBoid(new Boid(mouseX,mouseY, "fish"));
-  }
-}
-
-function noMoreFish(flock){
-    let count = 0;
-    for (let i = 0; i < flock.lenFish; i++){
-        if (flock.boids.dead){
-            flock.lenFish -= 1
-            console.log(flock.lenFish)
-        }
+  // if (!noMoreFish(flock)){
+  //     flock.addBoid(new Boid(mouseX,mouseY, "fish"));
+  if(feed){
+      for (let i = 0; i < flockShark.boids.length; i++){
+          flockShark.boids[i].goHere = createVector(mouseX,mouseY)
+      }
     }
-    // console.log(flock.lenFish)
-}
+  }
+// }
+
+// function noMoreFish(flock){
+//     let count = 0;
+//     for (let i = 0; i < flock.lenFish; i++){
+//         if (flock.boids.dead){
+//             flock.lenFish -= 1
+//             console.log(flock.lenFish)
+//         }
+//     }
+//     // console.log(flock.lenFish)
+// }
 
 function mousePressed() {
     // if (flock.lenShark > sharks){
@@ -219,6 +224,8 @@ class Boid {
         this.target = undefined;
         this.preyPredator = undefined;
         this.attackMult = 0.0;
+
+        this.goHere = createVector(0,0);
     }
 
      homing(prey){
@@ -340,7 +347,7 @@ class Boid {
 
         //******--------
         //WRITE A NEW FUNCTION
-        var atk = this.attack(this.target); // Attack
+        var atk = this.attack(this.goHere);//this.target); // Attack
 
         // Arbitrarily weight these forces
         sep.mult(1.5);
@@ -513,9 +520,17 @@ class Boid {
         }
     }
 
+    // attack(target){
+    //     if (target != undefined){
+    //       return this.seek(target.boid.position);  // Steer towards the location
+    //   } else {
+    //             return createVector(0,0);
+    //         }
+    //     }
+
     attack(target){
-        if (target != undefined){
-          return this.seek(target.boid.position);  // Steer towards the location
+        if(feed){
+          return this.seek(this.goHere);  // Steer towards the location
       } else {
                 return createVector(0,0);
             }
