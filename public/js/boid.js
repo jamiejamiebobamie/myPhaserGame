@@ -78,11 +78,11 @@ function windowResized() {
 
 function draw() {
 
-  if (feed == true){
-       background("red")
-  } else {
+  // if (feed == true){
+  //      background("red")
+  // } else {
       background("#003366")
-  }
+  // }
 
   flock.run();
   flockShark.run();
@@ -150,7 +150,7 @@ class Flock{
     }
 
     run(){
-        console.log(this.eaten, this.lenFish)
+        // console.log(this.eaten, this.lenFish)
         for (var i = 0; i < this.boids.length; i++) {
           this.boids[i].run(this.boids);  // Passing the entire list of boids to each boid individually
         }
@@ -256,19 +256,19 @@ class Boid {
         let randomBool = random()
         if (this.fish == "fish"){
              if (this.dead == false){
-            if (feed){
-                if (randomBool > .5){
-                        return fish1WHITE
-                } else {
-                    return fish2WHITE
-                }
-            } else {
+            // if (feed){
+            //     if (randomBool > .5){
+            //             return fish1WHITE
+            //     } else {
+            //         return fish2WHITE
+            //     }
+            // } else {
                 if (randomBool > .5){
                     return fish1
                 } else {
                     return fish2
                 }
-            }
+            // }
         } else if (this.dead == true){
             return trans
         }
@@ -422,12 +422,11 @@ class Boid {
             tint(this.t[0],this.t[1],this.t[2],this.t[3])
             image(this.drawFishy(), -100,0)//this.position.x-200, this.position.y-25);
         } else if (this.fish == "fish"){
-            if (feed == true){
-            tint(255,255,255,200)
-            // filter(THRESHOLD)
-            }else{
+            // if (feed == true){
+            // tint(255,255,255,200)
+            // // filter(THRESHOLD)
+            // }else{
             tint(this.t[0],this.t[1],this.t[2],this.t[3])
-        }
             image(this.drawFishy(), 0, 0)//this.position.x, this.position.y);
         }
         pop();
@@ -435,11 +434,12 @@ class Boid {
 
 //##############
     borders(){
+        if(this.fish == "fish"){
         if (this.position.x < -this.r) this.position.x = width +this.r;
         if (this.position.y < -this.r) this.position.y = height+this.r;
         if (this.position.x > width +this.r) this.position.x = -this.r;
         if (this.position.y > height+this.r) this.position.y = -this.r;
-    }
+    }}
 
     separate(boids){
         if (this.fish == "fish"){
@@ -479,7 +479,7 @@ class Boid {
     }
 
     align(boids){
-        var neighbordist = 500; //70
+        var neighbordist = 100; //70
         var sum = createVector(0,0);
         var count = 0;
         for (var i = 0; i < boids.length; i++) {
@@ -502,7 +502,7 @@ class Boid {
     }
 
     cohesion(boids){
-        var neighbordist = 500; //70
+        var neighbordist = 100; //70
         var sum = createVector(0,0);   // Start with empty vector to accumulate all locations
         var count = 0;
         for (var i = 0; i < boids.length; i++) {
