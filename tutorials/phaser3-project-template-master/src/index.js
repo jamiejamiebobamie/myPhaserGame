@@ -1,5 +1,9 @@
 import 'phaser';
 
+import 'printModel' from utils.js
+
+document.body.innerHTML = printModel()
+
 var config = {
     type: Phaser.AUTO,
     parent: 'phaser-example',
