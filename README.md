@@ -14,9 +14,13 @@ Boids are the name given to autonomous agents that simulate the flocking behavio
 If you wish to contribute to this project feel free to fork this project and begin working on boid.js found in the public/js folder.
 
 To-Do's:
+
     Optimize the shark's behavior. As of now the shark is part of its own flock, which is unnecessary.
+
     Remove fish objects from flock on being eaten. As of now they simply become transparent.
+
     Add obstacles and enemies to the 'aquarium'.
+
     Add more fish to the flock when the player has eaten them all.
 
     Determine why the fish line-up diagonally across the screen when the player controls the shark...
