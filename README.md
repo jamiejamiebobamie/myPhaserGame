@@ -1,4 +1,4 @@
-This is a repository for a project that utilizes the p5.js boid simulation code found:
+This is a repository for a project that utilizes the p5.js boid-simulation code found here:
 
 https://p5js.org/examples/simulate-flocking.html
 
